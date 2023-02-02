@@ -1,20 +1,27 @@
-# teleop_twist_keyboard
-Generic Keyboard Teleop for ROS
+# mofidied_teleop_twist_keyboard
+Added song function to [telepo_twist_keyboard](https://github.com/ros-teleop/teleop_twist_keyboard)
+
+**This package depends on [create_robot kinetic ver.](https://github.com/AutonomyLab/create_robot/tree/kinetic)**
 
 # Launch
-Run.
+## ROS launch.
 ```
-rosrun teleop_twist_keyboard teleop_twist_keyboard.py
+roslaunch ca_driver create_2.launch
+```
+
+## Run.
+```
+rosrun modified_teleop_twist_keyboard teleop_twist_keyboard.py
 ```
 
 With custom values.
 ```
-rosrun teleop_twist_keyboard teleop_twist_keyboard.py _speed:=0.9 _turn:=0.8
+rosrun modified_teleop_twist_keyboard teleop_twist_keyboard.py _speed:=0.9 _turn:=0.8
 ```
 
 Publishing to a different topic (in this case `my_cmd_vel`).
 ```
-rosrun teleop_twist_keyboard teleop_twist_keyboard.py cmd_vel:=my_cmd_vel
+rosrun modified_teleop_twist_keyboard teleop_twist_keyboard.py cmd_vel:=my_cmd_vel
 ```
 
 # Usage
@@ -41,8 +48,22 @@ q/z : increase/decrease max speeds by 10%
 w/x : increase/decrease only linear speed by 10%
 e/c : increase/decrease only angular speed by 10%
 
+Playing song(select roomba talking word)
+---------------------------
+   1,2,3,4
+
+talking word meanings
+1 : TBD
+2 : TBD
+3 : TBD
+4 : TBD
+
 CTRL-C to quit
 ```
+## Change song set
+If you want to change song set, see the lines 108-116.
+Please see ["Song Chapter" of this specification](https://cdn-shop.adafruit.com/datasheets/create_2_Open_Interface_Spec.pdf) for more details about song definitions.
+
 
 # Repeat Rate
 

@@ -4,11 +4,19 @@ from __future__ import print_function
 
 import threading
 
-import roslib; roslib.load_manifest('teleop_twist_keyboard')
+import roslib; roslib.load_manifest('modified_teleop_twist_keyboard')
 import rospy
 
 from geometry_msgs.msg import Twist
 from geometry_msgs.msg import TwistStamped
+
+from std_msgs.msg import Bool
+from std_msgs.msg import UInt8MultiArray
+
+from ca_msgs.msg import DefineSong
+from ca_msgs.msg import PlaySong
+
+import time
 
 import sys
 from select import select
@@ -45,9 +53,19 @@ q/z : increase/decrease max speeds by 10%
 w/x : increase/decrease only linear speed by 10%
 e/c : increase/decrease only angular speed by 10%
 
+Playing song
+---------------------------
+   1,2,3,4
+
+1 : "OK"
+2 : "Talking 1"
+3 : "Talking 2"
+4 : 
+
 CTRL-C to quit
 """
 
+# KeyBindings
 moveBindings = {
         'i':(1,0,0,0),
         'o':(1,0,0,-1),
@@ -77,6 +95,71 @@ speedBindings={
         'e':(1,1.1),
         'c':(1,.9),
     }
+songBindings={
+        '1':0,
+        '2':1,
+        '3':2,
+        '4':3,
+    }
+
+
+# Song Definition
+## LOW tone of voice 
+a_voice={
+    0:{
+        'song': 0,
+        'length': 3,
+        'notes':  [55,55,55],
+        'durations': [0.5,0.5,0.5]
+    },
+    1:{
+        'song': 1,
+        'length': 3,
+        'notes':  [58,58,58],
+        'durations': [0.5,0.5,0.5]
+    },
+    2:{
+        'song': 2,
+        'length': 3,
+        'notes':  [62,62,62],
+        'durations': [0.5,0.5,0.5]
+    },
+    3:{
+        'song': 3,
+        'length': 3,
+        'notes':  [70,70,70],
+        'durations': [0.5,0.5,0.5]
+    }
+}
+
+## HIGH tone of voice
+b_voice={
+    0:{
+        'song': 0,
+        'length': 2,
+        'notes':  [80,80],
+        'durations': [1.0,1.0]
+    },
+    1:{
+        'song': 1,
+        'length': 2,
+        'notes':  [88,88],
+        'durations': [1.0,1.0]
+    },
+    2:{
+        'song': 2,
+        'length': 2,
+        'notes':  [95,95],
+        'durations': [1.0,1.0]
+    },
+    3:{
+        'song': 3,
+        'length': 2,
+        'notes':  [100,100],
+        'durations': [1.0,1.0]
+    }
+}
+
 
 class PublishThread(threading.Thread):
     def __init__(self, rate):
@@ -166,6 +249,72 @@ class PublishThread(threading.Thread):
         twist.angular.z = 0
         self.publisher.publish(twist_msg)
 
+class SongPublishThread(threading.Thread):
+    def __init__(self, rate):
+        super(SongPublishThread, self).__init__()
+        self.define_publisher = rospy.Publisher('define_song', DefineSong, queue_size = 1)
+        self.play_publisher = rospy.Publisher('play_song', PlaySong, queue_size = 1)
+        self.condition = threading.Condition()
+        self.done = False
+        self.voice_tone = "a"
+
+        # Set timeout to None if rate is 0 (causes new_message to wait forever
+        # for new data to publish)
+        if rate != 0.0:
+            self.timeout = 1.0 / rate
+        else:
+            self.timeout = None
+
+        self.start()
+
+
+    def define_allsong(self):
+        song0 = DefineSong()
+        song1 = DefineSong()
+        song2 = DefineSong()
+        song3 = DefineSong()
+        songs = [song0, song1, song2, song3]
+        
+        if self.voice_tone == "a":
+
+            for i in range(len(songs)):
+                songs[i].song= a_voice[i]["song"]
+                songs[i].length = a_voice[i]["length"]
+                songs[i].notes = a_voice[i]['notes']
+                songs[i].durations = a_voice[i]['durations']
+                self.define_publisher.publish(songs[i])
+                print('Now defining song no: %d'% int(i+1))
+                time.sleep(1.0)
+
+
+        elif self.voice_tone == "b":
+
+            for i in range(len(songs)):
+                songs[i].song= b_voice[i]["song"]
+                songs[i].length = b_voice[i]["length"]
+                songs[i].notes = b_voice[i]['notes']
+                songs[i].durations = b_voice[i]['durations']
+                self.define_publisher.publish(songs[i])
+                print('Now defining song no: %d'% int(i+1))
+                time.sleep(1.0)
+
+    def play(self, key):
+        self.play_publisher.publish(key)
+        print('NOW PLAYING SONG ID : %d'% int(key+1))
+        
+
+    def stop(self):
+        self.done = True
+        self.join()
+    
+    def set_voice_tone(self, tone):
+        if tone == 'a':
+            self.voice_tone = "a"
+            print("\n Your robot is A mode \n")
+        else:
+            self.voice_tone = "b"
+            print("\n Your robot is B mode \n")
+        self.define_allsong()
 
 def getKey(settings, timeout):
     if sys.platform == 'win32':
@@ -194,11 +343,12 @@ def restoreTerminalSettings(old_settings):
 
 def vels(speed, turn):
     return "currently:\tspeed %s\tturn %s " % (speed,turn)
+    
 
 if __name__=="__main__":
     settings = saveTerminalSettings()
 
-    rospy.init_node('teleop_twist_keyboard')
+    rospy.init_node('modified_teleop_twist_keyboard')
 
     speed = rospy.get_param("~speed", 0.5)
     turn = rospy.get_param("~turn", 1.0)
@@ -212,6 +362,7 @@ if __name__=="__main__":
         TwistMsg = TwistStamped
 
     pub_thread = PublishThread(repeat)
+    song_thread = SongPublishThread(repeat)
 
     x = 0
     y = 0
@@ -219,6 +370,19 @@ if __name__=="__main__":
     th = 0
     status = 0
 
+    
+    print("Which tone of voice do you use?")
+    print("Press \'a\' , you use LOW voice.")
+    print("Press \'b\' , you use HIGH voice.")
+
+    while(1):
+        key = getKey(settings, key_timeout)
+        if key == 'a':
+            song_thread.set_voice_tone('a')
+            break
+        elif key == 'b':
+            song_thread.set_voice_tone('b')
+            break
     try:
         pub_thread.wait_for_subscribers()
         pub_thread.update(x, y, z, th, speed, turn)
@@ -243,6 +407,9 @@ if __name__=="__main__":
                 if (status == 14):
                     print(msg)
                 status = (status + 1) % 15
+            elif key in songBindings.keys():
+                song_thread.play(songBindings[key])
+
             else:
                 # Skip updating cmd_vel if key timeout and robot already
                 # stopped.
@@ -262,4 +429,6 @@ if __name__=="__main__":
 
     finally:
         pub_thread.stop()
+        song_thread.stop()
+
         restoreTerminalSettings(settings)
