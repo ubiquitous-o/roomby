@@ -10,9 +10,6 @@ import rospy
 from geometry_msgs.msg import Twist
 from geometry_msgs.msg import TwistStamped
 
-from std_msgs.msg import Bool
-from std_msgs.msg import UInt8MultiArray
-
 from ca_msgs.msg import DefineSong
 from ca_msgs.msg import PlaySong
 
@@ -53,14 +50,14 @@ q/z : increase/decrease max speeds by 10%
 w/x : increase/decrease only linear speed by 10%
 e/c : increase/decrease only angular speed by 10%
 
-Playing song
+Playing song(select roomba talking word)
 ---------------------------
    1,2,3,4
 
 1 : "OK"
-2 : "Talking 1"
-3 : "Talking 2"
-4 : 
+2 : "!!"
+3 : "??"
+4 : "yeah!"
 
 CTRL-C to quit
 """
@@ -106,57 +103,65 @@ songBindings={
 # Song Definition
 ## LOW tone of voice 
 a_voice={
+    # OK
     0:{
         'song': 0,
         'length': 3,
-        'notes':  [55,55,55],
-        'durations': [0.5,0.5,0.5]
+        'notes':  [68,30,64],
+        'durations': [0.2,0.1,0.5]
     },
+    # !!
     1:{
         'song': 1,
-        'length': 3,
-        'notes':  [58,58,58],
-        'durations': [0.5,0.5,0.5]
+        'length': 4,
+        'notes':  [62,69,62,69],
+        'durations': [0.1,0.1,0.1,0.1]
     },
+    # ??
     2:{
         'song': 2,
-        'length': 3,
-        'notes':  [62,62,62],
-        'durations': [0.5,0.5,0.5]
+        'length': 4,
+        'notes':  [57,52,51,56],
+        'durations': [0.1,0.1,0.2,0.2]
     },
+    # yeah!
     3:{
         'song': 3,
-        'length': 3,
-        'notes':  [70,70,70],
-        'durations': [0.5,0.5,0.5]
+        'length': 5,
+        'notes':  [72,72,30,72,77],
+        'durations': [0.1,0.1,0.05,0.1,0.5]
     }
 }
 
 ## HIGH tone of voice
 b_voice={
+    # OK
     0:{
         'song': 0,
-        'length': 2,
-        'notes':  [80,80],
-        'durations': [1.0,1.0]
+        'length': 3,
+        'notes':  [80,30,76],
+        'durations': [0.2,0.1,0.5]
     },
+    # !!
     1:{
         'song': 1,
-        'length': 2,
-        'notes':  [88,88],
-        'durations': [1.0,1.0]
+        'length': 4,
+        'notes':  [86,93,86,93],
+        'durations': [0.1,0.1,0.1,0.1]
     },
+    # ??
     2:{
         'song': 2,
-        'length': 2,
-        'notes':  [95,95],
-        'durations': [1.0,1.0]
+        'length': 4,
+        'notes':  [81,76,75,80],
+        'durations': [0.1,0.1,0.2,0.2]
     },
+    # yeah!
     3:{
         'song': 3,
-        'length': 2,
-        'notes':  [100,100],
-        'durations': [1.0,1.0]
+        'length': 5,
+        'notes':  [84,84,30,84,89],
+        'durations': [0.1,0.1,0.05,0.1,0.5]
     }
 }
 
@@ -371,9 +376,9 @@ if __name__=="__main__":
     status = 0
 
     
-    print("Which tone of voice do you use?")
-    print("Press \'a\' , you use LOW voice.")
-    print("Press \'b\' , you use HIGH voice.")
+    print("Which tone of voice ?")
+    print("Press \'a\' , LOWER voice.")
+    print("Press \'b\' , HIGHER voice.")
 
     while(1):
         key = getKey(settings, key_timeout)

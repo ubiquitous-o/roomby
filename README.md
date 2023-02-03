@@ -53,10 +53,10 @@ Playing song(select roomba talking word)
    1,2,3,4
 
 talking word meanings
-1 : TBD
-2 : TBD
-3 : TBD
-4 : TBD
+1 : "OK"
+2 : "!!"
+3 : "??"
+4 : "yeah!"
 
 CTRL-C to quit
 ```
