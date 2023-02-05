@@ -38,6 +38,7 @@ Moving around:
 anything else : stop
 
 q/z : high speed mode/low speed mode
+c: circle move mode
 
 Playing song(select roomba talking word)
 ---------------------------
@@ -54,10 +55,10 @@ CTRL-C to quit
 # KeyBindings
 moveBindings = {
         'i':(1,0,0,0),
-        # 'o':(1,0,0,-1),
+        'o':(1,0,0,-1),
         'j':(0,0,0,1),
         'l':(0,0,0,-1),
-        # 'u':(1,0,0,1),
+        'u':(1,0,0,1),
         'k':(-1,0,0,0),
         # '.':(-1,0,0,1),
         # 'm':(-1,0,0,-1),
@@ -74,7 +75,8 @@ moveBindings = {
     }
 
 speedBindings={
-        'q':(0.5,1.2),
+        'c':(0.5,3),
+        'q':(0.5, 1.2),
         'z':(0.15,0.8),
         # 'q':(1.1,1.1),
         # 'z':(.9,.9),
@@ -395,7 +397,6 @@ if __name__=="__main__":
             elif key in speedBindings.keys():
                 speed = speedBindings[key][0]
                 turn = speedBindings[key][1]
-
                 # speed = min(speed_limit, speed * speedBindings[key][0])
                 # turn = min(turn_limit, turn * speedBindings[key][1])
                 # if speed == speed_limit:

@@ -36,6 +36,7 @@ Moving around:
 anything else : stop
 
 q/z : high speed mode/ low speed mode
+c: circle move mode
 
 Playing song(select roomba talking word)
 ---------------------------
