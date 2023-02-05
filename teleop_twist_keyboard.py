@@ -31,24 +31,13 @@ msg = """
 Reading from the keyboard  and Publishing to Twist!
 ---------------------------
 Moving around:
-   u    i    o
-   j    k    l
-   m    ,    .
-
-For Holonomic mode (strafing), hold down the shift key:
----------------------------
-   U    I    O
-   J    K    L
-   M    <    >
-
-t : up (+z)
-b : down (-z)
+        i    
+   j         l
+        ,    
 
 anything else : stop
 
-q/z : increase/decrease max speeds by 10%
-w/x : increase/decrease only linear speed by 10%
-e/c : increase/decrease only angular speed by 10%
+q/z : high speed mode/low speed mode
 
 Playing song(select roomba talking word)
 ---------------------------
@@ -65,32 +54,34 @@ CTRL-C to quit
 # KeyBindings
 moveBindings = {
         'i':(1,0,0,0),
-        'o':(1,0,0,-1),
+        # 'o':(1,0,0,-1),
         'j':(0,0,0,1),
         'l':(0,0,0,-1),
-        'u':(1,0,0,1),
+        # 'u':(1,0,0,1),
         ',':(-1,0,0,0),
-        '.':(-1,0,0,1),
-        'm':(-1,0,0,-1),
-        'O':(1,-1,0,0),
-        'I':(1,0,0,0),
-        'J':(0,1,0,0),
-        'L':(0,-1,0,0),
-        'U':(1,1,0,0),
-        '<':(-1,0,0,0),
-        '>':(-1,-1,0,0),
-        'M':(-1,1,0,0),
-        't':(0,0,1,0),
-        'b':(0,0,-1,0),
+        # '.':(-1,0,0,1),
+        # 'm':(-1,0,0,-1),
+        # 'O':(1,-1,0,0),
+        # 'I':(1,0,0,0),
+        # 'J':(0,1,0,0),
+        # 'L':(0,-1,0,0),
+        # 'U':(1,1,0,0),
+        # '<':(-1,0,0,0),
+        # '>':(-1,-1,0,0),
+        # 'M':(-1,1,0,0),
+        # 't':(0,0,1,0),
+        # 'b':(0,0,-1,0),
     }
 
 speedBindings={
-        'q':(1.1,1.1),
-        'z':(.9,.9),
-        'w':(1.1,1),
-        'x':(.9,1),
-        'e':(1,1.1),
-        'c':(1,.9),
+        'q':(0.5,2.0),
+        'z':(0.15,0.8),
+        # 'q':(1.1,1.1),
+        # 'z':(.9,.9),
+        # 'w':(1.1,1),
+        # 'x':(.9,1),
+        # 'e':(1,1.1),
+        # 'c':(1,.9),
     }
 songBindings={
         '1':0,
@@ -355,8 +346,8 @@ if __name__=="__main__":
 
     rospy.init_node('modified_teleop_twist_keyboard')
 
-    speed = rospy.get_param("~speed", 0.5)
-    turn = rospy.get_param("~turn", 1.0)
+    speed = rospy.get_param("~speed", 0.15)
+    turn = rospy.get_param("~turn", 0.8)
     speed_limit = rospy.get_param("~speed_limit", 1000)
     turn_limit = rospy.get_param("~turn_limit", 1000)
     repeat = rospy.get_param("~repeat_rate", 0.0)
@@ -402,16 +393,19 @@ if __name__=="__main__":
                 z = moveBindings[key][2]
                 th = moveBindings[key][3]
             elif key in speedBindings.keys():
-                speed = min(speed_limit, speed * speedBindings[key][0])
-                turn = min(turn_limit, turn * speedBindings[key][1])
-                if speed == speed_limit:
-                    print("Linear speed limit reached!")
-                if turn == turn_limit:
-                    print("Angular speed limit reached!")
+                speed = speedBindings[key][0]
+                turn = speedBindings[key][1]
+
+                # speed = min(speed_limit, speed * speedBindings[key][0])
+                # turn = min(turn_limit, turn * speedBindings[key][1])
+                # if speed == speed_limit:
+                #     print("Linear speed limit reached!")
+                # if turn == turn_limit:
+                #     print("Angular speed limit reached!")
                 print(vels(speed,turn))
-                if (status == 14):
-                    print(msg)
-                status = (status + 1) % 15
+                # if (status == 14):
+                #     print(msg)
+                # status = (status + 1) % 15
             elif key in songBindings.keys():
                 song_thread.play(songBindings[key])
 

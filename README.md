@@ -11,7 +11,7 @@ roslaunch ca_driver create_2.launch
 
 ## Run.
 ```
-rosrun modified_teleop_twist_keyboard teleop_twist_keyboard.py
+rosrun modified_teleop_twist_keyboard teleop_twist_keyboard.py _repeat_rate:=10.0 _key_timeout:=0.5
 ```
 
 With custom values.
@@ -29,24 +29,13 @@ rosrun modified_teleop_twist_keyboard teleop_twist_keyboard.py cmd_vel:=my_cmd_v
 Reading from the keyboard  and Publishing to Twist!
 ---------------------------
 Moving around:
-   u    i    o
-   j    k    l
-   m    ,    .
-
-For Holonomic mode (strafing), hold down the shift key:
----------------------------
-   U    I    O
-   J    K    L
-   M    <    >
-
-t : up (+z)
-b : down (-z)
+        i     
+   j         l
+        ,    
 
 anything else : stop
 
-q/z : increase/decrease max speeds by 10%
-w/x : increase/decrease only linear speed by 10%
-e/c : increase/decrease only angular speed by 10%
+q/z : high speed mode/ low speed mode
 
 Playing song(select roomba talking word)
 ---------------------------
