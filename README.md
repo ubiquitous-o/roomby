@@ -31,7 +31,7 @@ Reading from the keyboard  and Publishing to Twist!
 Moving around:
         i     
    j         l
-        ,    
+        k   
 
 anything else : stop
 
