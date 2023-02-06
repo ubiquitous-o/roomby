@@ -31,9 +31,9 @@ msg = """
 Reading from the keyboard  and Publishing to Twist!
 ---------------------------
 Moving around:
-        i    
+   u    i    o
    j         l
-        ,    
+   m    k    .
 
 anything else : stop
 
@@ -60,8 +60,8 @@ moveBindings = {
         'l':(0,0,0,-1),
         'u':(1,0,0,1),
         'k':(-1,0,0,0),
-        # '.':(-1,0,0,1),
-        # 'm':(-1,0,0,-1),
+        '.':(-1,0,0,1),
+        'm':(-1,0,0,-1),
         # 'O':(1,-1,0,0),
         # 'I':(1,0,0,0),
         # 'J':(0,1,0,0),
