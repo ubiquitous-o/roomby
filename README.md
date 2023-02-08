@@ -29,7 +29,6 @@ rosrun modified_teleop_twist_keyboard teleop_twist_keyboard.py cmd_vel:=my_cmd_v
 Reading from the keyboard  and Publishing to Twist!
 ---------------------------
 Moving around:
-Moving around:
    u    i    o
    j         l
    m    k    . 
